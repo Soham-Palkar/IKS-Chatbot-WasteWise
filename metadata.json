@@ -1,0 +1,6 @@
+{
+  "name": "WasteWise",
+  "description": "AI Waste Segregation Assistant with IKS Reasoning Architecture and real-time classification",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
