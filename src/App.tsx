@@ -10,10 +10,8 @@ import { ThinkingIndicator } from './components/ThinkingIndicator';
 import { ErrorCard } from './components/ErrorCard';
 import { WelcomeState } from './components/WelcomeState';
 import { ChatInput } from './components/ChatInput';
-import { ApiUsageModal } from './components/ApiUsageModal';
 import { SettingsModal } from './components/SettingsModal';
 import { MissingKeyCard } from './components/MissingKeyCard';
-import { LimitReachedCard } from './components/LimitReachedCard';
 import { analyzeWasteImage, VisionPredictionResponse } from './services/wasteService';
 import {
   queryWasteWise,
@@ -22,10 +20,8 @@ import {
   getActiveApiKey,
 } from './services/gemini';
 import { hasApiKey, getStoredAuthMode, getApiKey } from './utils/apiKeyStorage';
-import { ChatMessage, ApiUsageState, SettingsState, DecisionOption } from './types';
+import { ChatMessage, DecisionOption } from './types';
 import { RotateCcw } from 'lucide-react';
-
-const SESSION_LIMIT = 50;
 
 export default function App() {
   // Fresh, empty conversation state - NO demo messages
@@ -35,41 +31,7 @@ export default function App() {
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
   const [lastVisionPrediction, setLastVisionPrediction] = useState<LastVisionContext | null>(null);
 
-  // Modals state
-  const [isUsageModalOpen, setIsUsageModalOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
-  // Application session credit usage tracking
-  const [sessionUsage, setSessionUsage] = useState<number>(0);
-
-  // Settings state
-  const [settings, setSettings] = useState<SettingsState>(() => {
-    const authMode = getStoredAuthMode();
-    const customKey = getApiKey() || '';
-    const active = authMode === 'custom' ? hasApiKey() : true;
-
-    return {
-      provider: 'Google Gemini',
-      model: 'Gemini 2.5 Flash',
-      authMode,
-      customApiKey: customKey,
-      keyStatus: active ? 'active' : 'not_configured',
-    };
-  });
-
-  // Derived API usage state for the header and modal
-  const apiUsage: ApiUsageState = {
-    usedRequests: sessionUsage,
-    maxRequests: SESSION_LIMIT,
-    sessionUsageDate: 'Today',
-    status:
-      sessionUsage >= SESSION_LIMIT
-        ? 'limit_reached'
-        : sessionUsage >= 40
-        ? 'warning'
-        : 'active',
-    authType: settings.authMode,
-  };
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -89,26 +51,7 @@ export default function App() {
     const trimmed = text.trim();
     if (!trimmed || isThinking || isAnalyzingImage) return;
 
-    // 1. Check if session limit has been reached
-    if (sessionUsage >= SESSION_LIMIT) {
-      const userMsg: ChatMessage = {
-        id: `user-${Date.now()}`,
-        sender: 'user',
-        timestamp: getCurrentTime(),
-        type: 'user',
-        text: trimmed,
-      };
-      const limitMsg: ChatMessage = {
-        id: `limit-${Date.now()}`,
-        sender: 'assistant',
-        timestamp: getCurrentTime(),
-        type: 'limit_reached',
-      };
-      setMessages((prev) => [...prev, userMsg, limitMsg]);
-      return;
-    }
-
-    // 2. Add user message to conversation feed
+    // 1. Add user message to conversation feed
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
       sender: 'user',
@@ -166,10 +109,7 @@ export default function App() {
         return;
       }
 
-      // Successful AI answer: increment session credits
-      if (!result.isOutOfScope) {
-        setSessionUsage((prev) => Math.min(SESSION_LIMIT, prev + 1));
-      }
+
 
       // Display response card
       const assistantMsg: ChatMessage = {
@@ -183,6 +123,7 @@ export default function App() {
         description: result.text,
         degradationTime: result.degradationTime,
         soilNutrientYield: result.soilNutrientYield,
+        iksReasoning: result.iksReasoning,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -246,19 +187,6 @@ export default function App() {
   const handleAnalyzeWasteImage = async () => {
     if (!pendingImage || isAnalyzingImage) return;
 
-    // Check credit limit
-    if (sessionUsage >= SESSION_LIMIT) {
-      handleCancelPendingImage();
-      const limitMsg: ChatMessage = {
-        id: `limit-${Date.now()}`,
-        sender: 'assistant',
-        timestamp: getCurrentTime(),
-        type: 'limit_reached',
-      };
-      setMessages((prev) => [...prev, limitMsg]);
-      return;
-    }
-
     setIsAnalyzingImage(true);
 
     try {
@@ -268,9 +196,6 @@ export default function App() {
       const currentUrl = pendingImage.url;
       setPendingImage(null);
 
-      // Increment session credits
-      setSessionUsage((prev) => Math.min(SESSION_LIMIT, prev + 1));
-
       // Save context for conversational follow-ups (e.g. "Why is this dry waste?")
       setLastVisionPrediction({
         object: result.object,
@@ -278,6 +203,19 @@ export default function App() {
         confidence: result.confidence,
         reason: result.reason,
       });
+
+      // Low confidence fallback if confidence is below threshold (< 0.70)
+      if (result.confidence < 0.70) {
+        const lowConfMsg: ChatMessage = {
+          id: `low-conf-${Date.now()}`,
+          sender: 'assistant',
+          timestamp: getCurrentTime(),
+          type: 'low_confidence',
+          imageUrl: currentUrl,
+        };
+        setMessages((prev) => [...prev, lowConfMsg]);
+        return;
+      }
 
       const identifiedMsg: ChatMessage = {
         id: `waste-id-${Date.now()}`,
@@ -322,12 +260,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#f3fcf0] flex flex-col antialiased text-[#151d17]">
-      {/* Top Header with Compact Usage Pill & Settings */}
-      <Header
-        apiUsage={apiUsage}
-        onOpenUsage={() => setIsUsageModalOpen(true)}
-        onOpenSettings={() => setIsSettingsModalOpen(true)}
-      />
+      {/* Top Header */}
+      <Header />
 
       {/* Main Conversation Container */}
       <main className="flex-1 w-full max-w-[1040px] mx-auto px-3 sm:px-6 pt-3 pb-28 flex flex-col">
@@ -381,6 +315,7 @@ export default function App() {
                     description={msg.description || ''}
                     degradationTime={msg.degradationTime}
                     soilNutrientYield={msg.soilNutrientYield}
+                    iksReasoning={msg.iksReasoning}
                   />
                 );
               }
@@ -423,14 +358,7 @@ export default function App() {
                 );
               }
 
-              if (msg.type === 'limit_reached') {
-                return (
-                  <LimitReachedCard
-                    key={msg.id}
-                    onManageKey={() => setIsSettingsModalOpen(true)}
-                  />
-                );
-              }
+
 
               if (msg.type === 'low_confidence') {
                 return (
@@ -479,27 +407,7 @@ export default function App() {
         disabled={isThinking || isAnalyzingImage}
       />
 
-      {/* API Usage Modal */}
-      {isUsageModalOpen && (
-        <ApiUsageModal
-          isOpen={isUsageModalOpen}
-          onClose={() => setIsUsageModalOpen(false)}
-          apiUsage={apiUsage}
-          settings={settings}
-          onOpenSettings={() => setIsSettingsModalOpen(true)}
-        />
-      )}
 
-      {/* Settings Modal */}
-      {isSettingsModalOpen && (
-        <SettingsModal
-          isOpen={isSettingsModalOpen}
-          onClose={() => setIsSettingsModalOpen(false)}
-          settings={settings}
-          apiUsage={apiUsage}
-          onSaveSettings={(newSettings) => setSettings(newSettings)}
-        />
-      )}
     </div>
   );
 }

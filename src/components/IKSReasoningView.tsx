@@ -1,5 +1,5 @@
 import React from 'react';
-import { Brain, ArrowDown } from 'lucide-react';
+import { BookOpen, ArrowDown, ShieldCheck } from 'lucide-react';
 import { IKSReasoning } from '../types';
 
 interface IKSReasoningViewProps {
@@ -7,18 +7,30 @@ interface IKSReasoningViewProps {
 }
 
 export const IKSReasoningView: React.FC<IKSReasoningViewProps> = ({ reasoning }) => {
+  const step1 = reasoning.traditionalKnowledge || reasoning.observation || 'Traditional resource stewardship practice.';
+  const step2 = reasoning.knowledgePrinciple || reasoning.evidence || 'Ecological balance and resource conservation.';
+  const step3 = reasoning.modernInterpretation || reasoning.inference || 'Contemporary waste reduction and circularity principle.';
+  const step4 = reasoning.practicalApplication || reasoning.conclusion || 'Segregate and handle according to sustainable guidelines.';
+
   const steps = [
-    { num: '01', title: 'Observation', desc: reasoning.observation },
-    { num: '02', title: 'Evidence', desc: reasoning.evidence },
-    { num: '03', title: 'Inference', desc: reasoning.inference },
-    { num: '04', title: 'Conclusion', desc: reasoning.conclusion },
+    { num: '01', title: 'Traditional Knowledge', desc: step1 },
+    { num: '02', title: 'Knowledge Principle', desc: step2 },
+    { num: '03', title: 'Modern Interpretation', desc: step3 },
+    { num: '04', title: 'Practical Application', desc: step4 },
   ];
 
   return (
     <div className="mt-4 pt-4 border-t border-[#e2ebdf] bg-[#f9fcf8] rounded-xl p-3.5 sm:p-4 text-xs animate-fade-in">
-      <div className="flex items-center gap-1.5 font-semibold text-[#151d17] mb-3">
-        <Brain className="w-4 h-4 text-[#2f7d4a]" />
-        <span>IKS Reasoning Architecture</span>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <div className="flex items-center gap-1.5 font-semibold text-[#151d17]">
+          <BookOpen className="w-4 h-4 text-[#2f7d4a]" />
+          <span>IKS Knowledge Connection</span>
+        </div>
+        {reasoning.topic && (
+          <span className="text-[10px] text-[#2f7d4a] font-medium bg-[#e7f3ea] px-2 py-0.5 rounded-md border border-[#c6dfc3]">
+            {reasoning.topic}
+          </span>
+        )}
       </div>
 
       <div className="relative pl-6 space-y-4">
@@ -49,6 +61,13 @@ export const IKSReasoningView: React.FC<IKSReasoningViewProps> = ({ reasoning })
           </div>
         ))}
       </div>
+
+      {reasoning.source && (
+        <div className="mt-3.5 pt-2.5 border-t border-[#e2ebdf]/70 flex items-start gap-1.5 text-[10px] text-[#707a6f]">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#2f7d4a] shrink-0 mt-0.5" />
+          <span><strong>Source:</strong> {reasoning.source}</span>
+        </div>
+      )}
     </div>
   );
 };

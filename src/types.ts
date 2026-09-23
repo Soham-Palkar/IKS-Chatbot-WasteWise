@@ -1,10 +1,17 @@
 export type WasteCategory = 'wet' | 'dry' | 'ewaste' | 'hazardous' | 'special';
 
 export interface IKSReasoning {
-  observation: string;
-  evidence: string;
-  inference: string;
-  conclusion: string;
+  traditionalKnowledge?: string;
+  knowledgePrinciple?: string;
+  modernInterpretation?: string;
+  practicalApplication?: string;
+  source?: string;
+  topic?: string;
+  // Backward compatibility fields:
+  observation?: string;
+  evidence?: string;
+  inference?: string;
+  conclusion?: string;
 }
 
 export interface WasteItemData {

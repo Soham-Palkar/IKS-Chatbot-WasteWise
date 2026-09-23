@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Scan, ShieldCheck, ChevronDown, ChevronUp, Brain } from 'lucide-react';
+import { Scan, ShieldCheck, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 import { CategoryBadge } from './CategoryBadge';
 import { IKSReasoningView } from './IKSReasoningView';
 import { WasteCategory, IKSReasoning } from '../types';
@@ -23,7 +23,7 @@ export const WasteIdentifiedCard: React.FC<WasteIdentifiedCardProps> = ({
   imageUrl,
   resinCode,
   confidence = 0.94,
-  iksReasoning
+  iksReasoning,
 }) => {
   const [isIksExpanded, setIsIksExpanded] = useState(false);
   const confidencePercent = Math.round(confidence * 100);
@@ -96,7 +96,7 @@ export const WasteIdentifiedCard: React.FC<WasteIdentifiedCardProps> = ({
         </div>
       </div>
 
-      {/* Expand IKS Reasoning Button */}
+      {/* Expand IKS Knowledge Connection Button */}
       {iksReasoning && (
         <div className="mt-3 pt-3 border-t border-[#f3fcf0]">
           <button
@@ -106,8 +106,8 @@ export const WasteIdentifiedCard: React.FC<WasteIdentifiedCardProps> = ({
             className="w-full flex items-center justify-between py-1.5 px-2 text-xs font-medium text-[#151d17] hover:text-[#2f7d4a] hover:bg-[#f3fcf0] rounded-lg transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-1.5 text-[#2f7d4a]">
-              <Brain className="w-3.5 h-3.5" />
-              <span className="font-semibold">View IKS Reasoning Architecture</span>
+              <BookOpen className="w-3.5 h-3.5" />
+              <span className="font-semibold">View IKS Knowledge Connection</span>
             </div>
             {isIksExpanded ? (
               <ChevronUp className="w-4 h-4 text-[#707a6f]" />

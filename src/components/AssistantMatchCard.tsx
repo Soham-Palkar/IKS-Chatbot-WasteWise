@@ -1,7 +1,8 @@
 import React from 'react';
 import { Recycle, Sprout } from 'lucide-react';
 import { CategoryBadge } from './CategoryBadge';
-import { WasteCategory } from '../types';
+import { IKSInsightCard } from './IKSInsightCard';
+import { WasteCategory, IKSReasoning } from '../types';
 
 interface AssistantMatchCardProps {
   itemTitle: string;
@@ -10,6 +11,7 @@ interface AssistantMatchCardProps {
   description: string;
   degradationTime?: string;
   soilNutrientYield?: string;
+  iksReasoning?: IKSReasoning;
 }
 
 export const AssistantMatchCard: React.FC<AssistantMatchCardProps> = ({
@@ -18,7 +20,8 @@ export const AssistantMatchCard: React.FC<AssistantMatchCardProps> = ({
   categoryLabel,
   description,
   degradationTime,
-  soilNutrientYield
+  soilNutrientYield,
+  iksReasoning,
 }) => {
   return (
     <div className="w-full my-3 bg-white rounded-2xl border border-[#e2ebdf] p-4 sm:p-5 shadow-xs transition-shadow hover:shadow-sm">
@@ -64,6 +67,9 @@ export const AssistantMatchCard: React.FC<AssistantMatchCardProps> = ({
           )}
         </div>
       )}
+
+      {/* IKS Knowledge Connection Accordion (only when genuine IKS entry is present) */}
+      {iksReasoning && <IKSInsightCard reasoning={iksReasoning} />}
     </div>
   );
 };

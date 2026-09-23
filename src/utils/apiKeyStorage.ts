@@ -1,45 +1,51 @@
 /**
  * API Key Storage Utility
- * Safely manages user-configured Gemini API keys for the session using sessionStorage.
- * Never logs, exposes, or transmits keys anywhere except directly to the Gemini SDK.
+ * Safely manages user-configured API keys for the session using sessionStorage.
+ * Never logs, exposes, or transmits keys anywhere except directly to AI APIs.
  */
 
 const STORAGE_KEY = 'wastewise_gemini_api_key';
+const OPENAI_STORAGE_KEY = 'wastewise_openai_api_key';
 const AUTH_MODE_KEY = 'wastewise_auth_mode';
+const PROVIDER_KEY = 'wastewise_ai_provider';
+const MODEL_KEY = 'wastewise_ai_model';
 
-export function saveApiKey(key: string): void {
+export function saveApiKey(key: string, provider: 'gemini' | 'openai' = 'gemini'): void {
   try {
     if (typeof window !== 'undefined' && window.sessionStorage) {
-      window.sessionStorage.setItem(STORAGE_KEY, key.trim());
+      const storageKey = provider === 'openai' ? OPENAI_STORAGE_KEY : STORAGE_KEY;
+      window.sessionStorage.setItem(storageKey, key.trim());
     }
-  } catch (err) {
+  } catch {
     console.error('SessionStorage unavailable');
   }
 }
 
-export function getApiKey(): string | null {
+export function getApiKey(provider: 'gemini' | 'openai' = 'gemini'): string | null {
   try {
     if (typeof window !== 'undefined' && window.sessionStorage) {
-      return window.sessionStorage.getItem(STORAGE_KEY);
+      const storageKey = provider === 'openai' ? OPENAI_STORAGE_KEY : STORAGE_KEY;
+      return window.sessionStorage.getItem(storageKey);
     }
-  } catch (err) {
+  } catch {
     return null;
   }
   return null;
 }
 
-export function removeApiKey(): void {
+export function removeApiKey(provider: 'gemini' | 'openai' = 'gemini'): void {
   try {
     if (typeof window !== 'undefined' && window.sessionStorage) {
-      window.sessionStorage.removeItem(STORAGE_KEY);
+      const storageKey = provider === 'openai' ? OPENAI_STORAGE_KEY : STORAGE_KEY;
+      window.sessionStorage.removeItem(storageKey);
     }
-  } catch (err) {
+  } catch {
     console.error('SessionStorage unavailable');
   }
 }
 
-export function hasApiKey(): boolean {
-  const key = getApiKey();
+export function hasApiKey(provider: 'gemini' | 'openai' = 'gemini'): boolean {
+  const key = getApiKey(provider);
   return Boolean(key && key.trim().length > 5);
 }
 
@@ -62,7 +68,50 @@ export function setStoredAuthMode(mode: 'default' | 'custom'): void {
     if (typeof window !== 'undefined' && window.sessionStorage) {
       window.sessionStorage.setItem(AUTH_MODE_KEY, mode);
     }
-  } catch (err) {
+  } catch {
+    console.error('SessionStorage unavailable');
+  }
+}
+
+export function getStoredProvider(): 'gemini' | 'openai' {
+  try {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      const p = window.sessionStorage.getItem(PROVIDER_KEY);
+      if (p === 'openai' || p === 'gemini') return p;
+    }
+  } catch {
+    return 'gemini';
+  }
+  return 'gemini';
+}
+
+export function setStoredProvider(provider: 'gemini' | 'openai'): void {
+  try {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      window.sessionStorage.setItem(PROVIDER_KEY, provider);
+    }
+  } catch {
+    console.error('SessionStorage unavailable');
+  }
+}
+
+export function getStoredModel(): string {
+  try {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      return window.sessionStorage.getItem(MODEL_KEY) || '';
+    }
+  } catch {
+    return '';
+  }
+  return '';
+}
+
+export function setStoredModel(model: string): void {
+  try {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      window.sessionStorage.setItem(MODEL_KEY, model);
+    }
+  } catch {
     console.error('SessionStorage unavailable');
   }
 }

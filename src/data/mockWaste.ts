@@ -1,182 +1,263 @@
-import { WasteItemData, IKSReasoning } from '../types';
+import { WasteItemData } from '../types';
+import { IKS_KNOWLEDGE_DATABASE } from './iksKnowledge';
+import { formatIKSSteps } from '../services/iksService';
+
+export const QUICK_PROMPTS = [
+  { label: 'Banana peel', emoji: '🍌', prompt: 'Where does a banana peel go?' },
+  { label: 'Plastic recycling', emoji: '🧴', prompt: 'Is this plastic bottle recyclable?' },
+  { label: 'Battery disposal', emoji: '🔋', prompt: 'How should I dispose of an old battery?' },
+  { label: 'IKS Sustainability', emoji: '🌿', prompt: 'What is the IKS connection to sustainable waste practices?' },
+];
+
+const getIksEntry = (id: string) => {
+  const item = IKS_KNOWLEDGE_DATABASE.find((e) => e.id === id);
+  return formatIKSSteps(item);
+};
 
 export const WASTE_KNOWLEDGE_BASE: Record<string, WasteItemData> = {
+  // Wet / Organic Waste
+  'banana': {
+    title: 'Banana Peel / Fruit Waste',
+    category: 'wet',
+    categoryLabel: 'Wet / Organic Waste',
+    description: 'Banana peels and fruit scraps are 100% biodegradable organic matter. Place them in your green wet waste bin or home compost unit.',
+    degradationTime: '~2 to 5 weeks',
+    soilNutrientYield: 'High (Rich in Potassium & Phosphorus)',
+    iksReasoning: getIksEntry('agricultural-composting-kunapajala'),
+  },
   'banana peel': {
     title: 'Banana Peel',
     category: 'wet',
     categoryLabel: 'Wet / Organic Waste',
-    description: 'It is biodegradable organic material and is generally handled with organic/wet waste. Compost at home or place directly in your municipal green bin.',
+    description: 'Biodegradable organic material. Place in the green wet waste bin or home compost. High in potassium and organic matter.',
     degradationTime: '~2 to 5 weeks',
-    soilNutrientYield: 'High',
-    iksReasoning: {
-      observation: 'Organic fruit peel exhibiting cellulosic composition.',
-      evidence: 'High moisture, nitrogen-rich, easily degradable by aerobic microorganisms.',
-      inference: 'Rapidly converts into humus and bio-fertilizer without microplastic leaching.',
-      conclusion: 'Segregate into the green organic/wet waste stream for composting or biomethanation.'
-    }
+    soilNutrientYield: 'High (Potassium & Carbon)',
+    iksReasoning: getIksEntry('agricultural-composting-kunapajala'),
   },
-  'plastic bottle': {
+  'apple': {
+    title: 'Apple Core / Fruit Residue',
+    category: 'wet',
+    categoryLabel: 'Wet / Organic Waste',
+    description: 'Organic fruit scraps decompose quickly. Add to home compost or your municipal green wet waste bin.',
+    degradationTime: '~2 to 8 weeks',
+    soilNutrientYield: 'Medium-High',
+    iksReasoning: getIksEntry('agricultural-composting-kunapajala'),
+  },
+  'vegetable': {
+    title: 'Vegetable Peels & Scraps',
+    category: 'wet',
+    categoryLabel: 'Wet / Organic Waste',
+    description: 'Kitchen vegetable trimmings and peels are nitrogen-rich wet waste ideal for vermicomposting and anaerobic digestion (biogas).',
+    degradationTime: '~1 to 4 weeks',
+    soilNutrientYield: 'High (Nitrogen & Trace Minerals)',
+    iksReasoning: getIksEntry('agricultural-composting-kunapajala'),
+  },
+  'food': {
+    title: 'Cooked Food / Leftovers',
+    category: 'wet',
+    categoryLabel: 'Wet / Organic Waste',
+    description: 'Leftover food scraps belong in the green wet waste bin. Drain excess liquids before disposal to prevent leachate.',
+    degradationTime: '~1 to 3 weeks',
+    soilNutrientYield: 'Medium',
+    iksReasoning: getIksEntry('agricultural-composting-kunapajala'),
+  },
+  'tea': {
+    title: 'Used Tea Leaves & Coffee Grounds',
+    category: 'wet',
+    categoryLabel: 'Wet / Organic Waste',
+    description: 'Used tea leaves and coffee grounds are fantastic soil conditioners. Remove any plastic stapler pins or synthetic tea bags before composting.',
+    degradationTime: '~2 to 4 weeks',
+    soilNutrientYield: 'Very High (Nitrogen & Aeration)',
+    iksReasoning: getIksEntry('agricultural-composting-kunapajala'),
+  },
+  'eggshell': {
+    title: 'Eggshells',
+    category: 'wet',
+    categoryLabel: 'Wet / Organic Waste',
+    description: 'Eggshells provide excellent calcium carbonate to compost. Crush them finely before adding to compost or garden soil.',
+    degradationTime: '~1 to 3 years (accelerated by crushing)',
+    soilNutrientYield: 'High (Calcium Carbonate)',
+    iksReasoning: getIksEntry('agricultural-composting-kunapajala'),
+  },
+  'coconut': {
+    title: 'Coconut Shell & Coir',
+    category: 'wet',
+    categoryLabel: 'Wet / Biodegradable Biomass',
+    description: 'Dry coconut shells and husk (coir) are high in lignin. Great for carbon-heavy composting, mulching, or coir pit moisture retention.',
+    degradationTime: '~6 to 12 months',
+    soilNutrientYield: 'High Carbon mulching material',
+    iksReasoning: getIksEntry('coconut-biomass-coir'),
+  },
+  'kulhad': {
+    title: 'Earthen Clay Cup (Kulhad)',
+    category: 'wet',
+    categoryLabel: 'Wet / Earthen Biodegradable',
+    description: 'Unglazed terracotta clay cups naturally disintegrate into topsoil minerals without toxic chemical residue. Crush and place in garden soil or compost.',
+    degradationTime: 'Immediate dissolution upon moisture exposure',
+    soilNutrientYield: 'Mineral enrichment (Clay/Silica)',
+    iksReasoning: getIksEntry('earthen-kulhad-matka'),
+  },
+  'pattal': {
+    title: 'Biodegradable Leaf Platter (Pattal)',
+    category: 'wet',
+    categoryLabel: 'Wet / Organic Compostable',
+    description: 'Stitched Sal or banana leaf plates without synthetic plastic coating. 100% compostable in municipal wet waste or backyard composting.',
+    degradationTime: '~3 to 6 weeks',
+    soilNutrientYield: 'High Organic Biomass',
+    iksReasoning: getIksEntry('leaf-platters-pattal'),
+  },
+
+  // Dry / Recyclable Waste
+  'bottle': {
     title: 'Plastic Bottle',
     category: 'dry',
     categoryLabel: 'Dry / Recyclable',
-    description: 'This item is generally handled through the dry/recyclable waste stream. Empty residual liquids and replace cap securely.',
+    description: 'Clean plastic bottles (PET 1 or HDPE 2) are fully recyclable. Empty residual liquids, rinse, flatten, and replace the cap securely before placing in the blue dry bin.',
     resinCode: 'PET 1',
-    confidence: 0.94,
-    iksReasoning: {
-      observation: 'Clear polyethylene terephthalate container with structural ridges and standard thread cap.',
-      evidence: 'SPI resin identification code PET 1 confirmed; clean rigid polymer geometry.',
-      inference: 'Thermoplastic polymer capable of mechanical shredding, pelletizing, and remelting.',
-      conclusion: 'Dispose through the municipal blue/dry recyclable stream after draining all liquid.'
-    }
+    confidence: 0.96,
   },
-  'battery': {
-    title: 'Battery (Household / Lithium)',
-    category: 'ewaste',
-    categoryLabel: 'E-Waste / Special',
-    description: 'Batteries must never be disposed of in general wet or dry waste. They contain toxic heavy metals and pose fire risks. Hand over at designated e-waste drop-off bins.',
-    iksReasoning: {
-      observation: 'Electrochemical energy storage cell containing electrolyte and heavy metal electrodes.',
-      evidence: 'Flammability hazard under compaction and heavy metal leachate potential (lead, cadmium, lithium).',
-      inference: 'Requires specialized pyrometallurgical or hydrometallurgical recycling facility.',
-      conclusion: 'Divert strictly to authorized municipal e-waste collection center.'
-    }
-  },
-  'coffee cup': {
-    title: 'Takeaway Coffee Cup',
+  'plastic bottle': {
+    title: 'Plastic Beverage Bottle',
     category: 'dry',
-    categoryLabel: 'Dry / Reject Waste',
-    description: 'Most disposable coffee cups are lined with polyethylene waterproof film, rendering them non-compostable in conventional systems unless certified compostable.',
-    resinCode: 'Mixed PAP/PE',
-    iksReasoning: {
-      observation: 'Paperboard beverage cup with inner hydrophobic laminate layer.',
-      evidence: 'Thin plastic (polyethylene) liner prevents liquid soaking but impedes conventional paper repulping.',
-      inference: 'Standard paper recycling mills cannot easily separate plastic film from wet pulp fibers.',
-      conclusion: 'Separate the plastic lid (recyclable dry waste) and place cup in non-recyclable dry waste unless commercial composting is specified.'
-    }
+    categoryLabel: 'Dry / Recyclable',
+    description: 'Empty residual liquid, rinse and compress. Place in the blue dry recyclable bin.',
+    resinCode: 'PET 1',
+    confidence: 0.98,
   },
-  'aerosol can': {
-    title: 'Aerosol Spray Can',
+  'plastic bag': {
+    title: 'Plastic Carry Bag / LDPE Film',
+    category: 'dry',
+    categoryLabel: 'Dry / Recyclable Plastic',
+    description: 'Clean, dry flexible plastics (LDPE 4). Collect clean bags together and hand over to local dry waste recyclers or municipal dry bins.',
+    resinCode: 'LDPE 4',
+  },
+  'milk packet': {
+    title: 'Milk Pouch / Polyethylene Film',
+    category: 'dry',
+    categoryLabel: 'Dry / Recyclable Plastic',
+    description: 'Cut open, rinse residual milk cleanly with water, and dry completely. Keep the small corner tip attached so it does not become micro-litter.',
+    resinCode: 'LDPE 4',
+  },
+  'paper': {
+    title: 'Paper / Newspaper / Office Paper',
+    category: 'dry',
+    categoryLabel: 'Dry / Recyclable Paper',
+    description: 'Keep paper clean and dry. Soiled or greasy paper cannot be recycled and must go into wet waste or composting.',
+    degradationTime: '~2 to 6 weeks',
+  },
+  'cardboard': {
+    title: 'Cardboard Box / Packaging',
+    category: 'dry',
+    categoryLabel: 'Dry / Recyclable',
+    description: 'Flatten cardboard boxes to save space. Remove heavy adhesive tape and place into the dry recyclable stream.',
+  },
+  'can': {
+    title: 'Metal / Aluminium Beverage Can',
+    category: 'dry',
+    categoryLabel: 'Dry / Recyclable Metal',
+    description: 'Aluminium and tin cans are infinitely recyclable. Rinse residual liquids and place in the dry recycling bin.',
+    iksReasoning: getIksEntry('closed-loop-metallurgy-thathera'),
+  },
+  'glass': {
+    title: 'Glass Bottle / Jar',
+    category: 'dry',
+    categoryLabel: 'Dry / Recyclable Glass',
+    description: 'Rinse out contents. Glass is 100% infinitely recyclable. If broken, wrap carefully in thick newspaper to protect sanitation workers.',
+  },
+  'cloth': {
+    title: 'Textile / Old Fabric',
+    category: 'dry',
+    categoryLabel: 'Dry / Reusable Textile',
+    description: 'Clean old textiles can be upcycled into cleaning rags, quilts (Godhadi), or donated. Place clean scrap textiles into dry waste.',
+    iksReasoning: getIksEntry('textile-upcycling-godhadi-kantha'),
+  },
+
+  // E-Waste
+  'battery': {
+    title: 'Battery (Household / Lithium / Lead-Acid)',
+    category: 'ewaste',
+    categoryLabel: 'E-Waste / Specialized Drop-Off',
+    description: 'Batteries must NEVER be thrown into wet or dry household bins. They contain toxic heavy metals (Cadmium, Lithium, Lead) and pose fire hazards. Deposit at designated municipal e-waste collection bins.',
+  },
+  'phone': {
+    title: 'Mobile Phone / Smartphone',
+    category: 'ewaste',
+    categoryLabel: 'E-Waste / Take-Back Program',
+    description: 'Contains precious metals (gold, copper) and hazardous flame retardants. Return via authorized brand take-back programs or registered e-waste recyclers.',
+  },
+  'charger': {
+    title: 'Charging Cable / Adapter',
+    category: 'ewaste',
+    categoryLabel: 'E-Waste',
+    description: 'Cables and power adapters contain copper and PVC. Hand over to certified e-waste aggregators.',
+  },
+  'laptop': {
+    title: 'Laptop / Computer Electronics',
+    category: 'ewaste',
+    categoryLabel: 'E-Waste',
+    description: 'Complex electronics with circuit boards and lithium batteries. Dispose exclusively through authorized e-waste collection centers.',
+  },
+  'bulb': {
+    title: 'CFL / Fluorescent Tube Bulb',
     category: 'hazardous',
-    categoryLabel: 'Hazardous / Special',
-    description: 'Pressurized metal containers can explode if crushed or incinerated. Ensure completely empty before placing in dry scrap metal recycling.',
-    iksReasoning: {
-      observation: 'Pressurized tinplate or aluminum canister with propellant valve mechanism.',
-      evidence: 'Residual flammable propellants (butane/propane) present explosive danger under compaction.',
-      inference: 'Safe for metal recycling only when completely depressurized and emptied.',
-      conclusion: 'Depressurize safely or surrender to community hazardous household waste drop-offs.'
-    }
-  }
+    categoryLabel: 'Hazardous / Mercury Waste',
+    description: 'CFLs and fluorescent tubes contain toxic mercury vapor. Never break or throw in normal bins. Hand over intact at municipal hazardous waste centers.',
+  },
+
+  // Hazardous / Special
+  'medicine': {
+    title: 'Expired Medicines / Blister Packs',
+    category: 'hazardous',
+    categoryLabel: 'Hazardous / Domestic Biomedical',
+    description: 'Expired pharmaceuticals should never be flushed down drains or tossed in wet/dry bins. Return through pharmacy take-back programs or municipal hazardous waste drop-offs.',
+  },
+  'aerosol': {
+    title: 'Pressurized Aerosol Spray Can',
+    category: 'hazardous',
+    categoryLabel: 'Hazardous / Pressurized Flammable',
+    description: 'Pressurized cans can explode under compaction. Ensure completely empty before disposing of through special hazardous waste channels.',
+  },
+  'paint': {
+    title: 'Paint Can / Chemical Thinner',
+    category: 'hazardous',
+    categoryLabel: 'Hazardous / Toxic Chemical',
+    description: 'Paints and chemical thinners contain VOCs and toxic solvents. Must be collected separately as domestic hazardous waste.',
+  },
 };
 
-export const QUICK_PROMPTS = [
-  { label: 'Banana peel', emoji: '🍌', prompt: 'Where does a banana peel go?' },
-  { label: 'Plastic bottle', emoji: '🧴', prompt: 'Where does a plastic bottle go?' },
-  { label: 'Battery', emoji: '🔋', prompt: 'What should I do with a battery?' },
-  { label: 'Food container', emoji: '🍱', prompt: 'I have a food container.' }
-];
-
 export function findWasteMatch(text: string): WasteItemData | null {
+  if (!text) return null;
   const normalized = text.toLowerCase().trim();
+
+  // Exact or direct word inclusion check
   for (const [key, data] of Object.entries(WASTE_KNOWLEDGE_BASE)) {
-    if (normalized.includes(key)) {
+    if (normalized === key || normalized.includes(key)) {
       return data;
     }
   }
+
+  // Common synonyms / stem matches
+  if (normalized.includes('banana') || normalized.includes('kela')) {
+    return WASTE_KNOWLEDGE_BASE['banana'];
+  }
+  if (normalized.includes('fruit') || normalized.includes('peel') || normalized.includes('chhilka')) {
+    return WASTE_KNOWLEDGE_BASE['vegetable'];
+  }
+  if (normalized.includes('sabzi') || normalized.includes('veggie')) {
+    return WASTE_KNOWLEDGE_BASE['vegetable'];
+  }
+  if (normalized.includes('plastic') || normalized.includes('pet')) {
+    return WASTE_KNOWLEDGE_BASE['bottle'];
+  }
+  if (normalized.includes('cell') || normalized.includes('lithium')) {
+    return WASTE_KNOWLEDGE_BASE['battery'];
+  }
+  if (normalized.includes('paper') || normalized.includes('newspaper') || normalized.includes('khabar')) {
+    return WASTE_KNOWLEDGE_BASE['paper'];
+  }
+  if (normalized.includes('can') || normalized.includes('tin') || normalized.includes('aluminium')) {
+    return WASTE_KNOWLEDGE_BASE['can'];
+  }
+
   return null;
-}
-
-export async function predictWasteImage(
-  file: File
-): Promise<{
-  object: string;
-  category: 'wet' | 'dry' | 'ewaste' | 'hazardous';
-  confidence: number;
-  reason: string;
-  resinCode?: string;
-  iksReasoning: IKSReasoning;
-}> {
-  // Check if live backend exists at /predict
-  try {
-    const formData = new FormData();
-    formData.append('image', file);
-    
-    // Add timeout to prevent hanging if backend is absent
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2500);
-    
-    const response = await fetch('/predict', {
-      method: 'POST',
-      body: formData,
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        object: data.object || 'Plastic Bottle',
-        category: (data.category as any) || 'dry',
-        confidence: typeof data.confidence === 'number' ? data.confidence : 0.94,
-        reason: data.reason || 'Detected rigid recyclable plastic item.',
-        resinCode: data.object?.toLowerCase().includes('bottle') ? 'PET 1' : undefined,
-        iksReasoning: {
-          observation: `${data.object || 'Item'} detected in the uploaded visual input.`,
-          evidence: data.reason || 'Computer vision model extracted feature contours corresponding to standard packaging profile.',
-          inference: `Item characteristics match standards for ${data.category || 'dry'} waste segregation protocols.`,
-          conclusion: `Segregate into the designated ${data.category || 'dry'} waste stream.`
-        }
-      };
-    }
-  } catch {
-    // Network/backend not ready - proceed smoothly with Mock Mode as required
-  }
-
-  // Realistic mock inference based on filename or default
-  const lowerName = file.name.toLowerCase();
-  
-  if (lowerName.includes('banana') || lowerName.includes('fruit') || lowerName.includes('food') || lowerName.includes('apple')) {
-    return {
-      object: 'Organic Fruit Waste',
-      category: 'wet',
-      confidence: 0.96,
-      reason: 'Organic biodegradable cellular structure identified.',
-      iksReasoning: {
-        observation: 'Biodegradable organic matter detected in optical capture.',
-        evidence: 'Natural cellular surface textures and high moisture profile detected.',
-        inference: 'Decomposes naturally without residual hazardous synthetic compounds.',
-        conclusion: 'Place into the organic/wet waste bin for composting.'
-      }
-    };
-  }
-
-  if (lowerName.includes('battery') || lowerName.includes('cell') || lowerName.includes('electronic')) {
-    return {
-      object: 'Lithium Battery Cell',
-      category: 'ewaste',
-      confidence: 0.91,
-      reason: 'Cylindrical or prismatic metal casing with battery contact points detected.',
-      iksReasoning: {
-        observation: 'Electrochemical energy storage unit detected in scan.',
-        evidence: 'Metallic terminal posts and standard cylindrical battery aspect ratio identified.',
-        inference: 'Contains lithium and chemical electrolytes requiring specialized recycling.',
-        conclusion: 'Divert strictly to an authorized municipal e-waste recycling receptacle.'
-      }
-    };
-  }
-
-  // Default: Plastic Bottle (matches screenshot reference)
-  return {
-    object: 'Plastic Bottle',
-    category: 'dry',
-    confidence: 0.94,
-    reason: 'This item is generally handled through the dry/recyclable waste stream. Empty residual liquids and replace cap securely.',
-    resinCode: 'PET 1',
-    iksReasoning: {
-      observation: 'Plastic bottle detected in the uploaded image.',
-      evidence: 'The detected object has characteristics of a polyethylene terephthalate (PET) beverage bottle.',
-      inference: 'The item is generally handled through the dry/recyclable waste stream with high post-consumer reclamation value.',
-      conclusion: 'Dispose through the appropriate dry/recyclable waste stream.'
-    }
-  };
 }
